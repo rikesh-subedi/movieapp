@@ -51,14 +51,14 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	cardImage: {
-		height: 184,
+		height: 204,
 		width: 135,
 		borderRadius: 3
 	},
 	cardDetails: {
 		paddingLeft: 10,
 		flex: 1,
-		paddingTop: 50
+		paddingTop: 20
 	},
 	cardTitle: {
 		color: 'white',
@@ -94,6 +94,19 @@ const styles = StyleSheet.create({
 	cardRunningHours: {
 		marginLeft: 5,
 		fontSize: 12
+	},
+	cardButtons:{
+		justifyContent: 'center',
+		padding: 10,
+		borderRadius: 3,
+		backgroundColor: 'green',
+		width: 130,
+		height:30,
+		marginTop: 10
+	},
+
+	cardButtonsText:{
+		color:'white'
 	}
 });
 

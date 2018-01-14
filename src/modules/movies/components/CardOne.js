@@ -36,7 +36,7 @@ const CardOne = ({ info, viewMovie }) => (
 				<Text style={styles.cardDescription} numberOfLines={3}>
 					{info.overview}
 				</Text>
-				<TouchableOpacity activeOpacity={0.9} onPress={viewMovie.bind(this, info.id)}>
+				<TouchableOpacity activeOpacity={0.9} onPress={viewMovie.bind(this, info)}>
 					<View style={styles.viewButton}>
 						<Text style={styles.viewButtonText}>View Details</Text>
 					</View>

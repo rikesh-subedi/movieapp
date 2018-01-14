@@ -4,6 +4,21 @@ import initialState from '../../reducers/initialState';
 export default function (state = initialState.movies, action) {
 	switch (action.type) {
 
+		case types.RETRIEVE_WATCHLIST_SUCCESS:
+			return {
+				...state,
+				watchlist: action.watchlist
+			};
+
+		case types.TOGGLE_FAVORITE:
+			return {
+				...state,
+				details: {
+					...state.details,
+					isFavorite: action.isFavorite
+				}
+			};
+
 		case types.RETRIEVE_POPULAR_MOVIES_SUCCESS:
 			return {
 				...state,

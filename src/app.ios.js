@@ -7,6 +7,7 @@ import { registerScreens } from './screens';
 
 import { iconsMap, iconsLoaded } from './utils/AppIcons';
 import configureStore from './store/configureStore';
+import * as movieListTypes from './constants/movieListTypes';
 
 const store = configureStore();
 
@@ -52,6 +53,16 @@ class App extends Component {
 				{
 					label: 'TV Shows',
 					screen: 'movieapp.Movies',
+					icon: iconsMap['ios-desktop-outline'],
+					selectedIcon: iconsMap['ios-desktop'],
+					title: 'Movies',
+					navigatorStyle
+				},{
+					label: 'My Watchlists',
+					screen: 'movieapp.MoviesList',
+					passProps: {
+						type: movieListTypes.WATCHLIST
+					},
 					icon: iconsMap['ios-desktop-outline'],
 					selectedIcon: iconsMap['ios-desktop'],
 					title: 'Movies',

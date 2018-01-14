@@ -6,7 +6,8 @@ import {
 	ScrollView,
 	Text,
 	ToastAndroid,
-	View
+	View,
+	TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -38,7 +39,8 @@ class Movie extends Component {
 			showSimilarMovies: true,
 			trailersTabHeight: null,
 			tab: 0,
-			youtubeVideos: []
+			youtubeVideos: [],
+			isInWatchlist: false
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -48,6 +50,8 @@ class Movie extends Component {
 		this._onScroll = this._onScroll.bind(this);
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
+		this._addMovieToWatchlist = this._addMovieToWatchlist.bind(this)
+		this._removeFromWatchlist = this._removeFromWatchlist.bind(this)
 		this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 	}
 
@@ -60,7 +64,7 @@ class Movie extends Component {
 	}
 
 	_retrieveDetails(isRefreshed) {
-		this.props.actions.retrieveMovieDetails(this.props.movieId)
+		this.props.actions.retrieveMovieDetails(this.props.id)
 			.then(() => {
 				this._retrieveYoutubeDetails();
 			});
@@ -68,7 +72,19 @@ class Movie extends Component {
 	}
 
 	_retrieveSimilarMovies() {
-		this.props.actions.retrieveSimilarMovies(this.props.movieId, 1);
+		this.props.actions.retrieveSimilarMovies(this.props.id, 1);
+	}
+	
+	_addMovieToWatchlist() {
+		this.props.actions.addToWatchlist(this.props)
+	}
+
+	_removeFromWatchlist() {
+		this.props.actions.removeFromWatchlist(this.props)
+	}
+
+	_checkIfMovieIsInWatchlist(){
+		this.props.actions.isMovieInWatchlist(this.props.movieId)
 	}
 
 	_onRefresh() {
@@ -210,10 +226,20 @@ class Movie extends Component {
 							<View style={styles.cardNumbers}>
 								<View style={styles.cardStar}>
 									{iconStar}
-									<Text style={styles.cardStarRatings}>8.9</Text>
+									<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
 								</View>
-								<Text style={styles.cardRunningHours} />
 							</View>
+							<View style={styles.cardNumbers}> 
+								<Text style={styles.cardStarRatings}>{info.runtime} mins</Text>
+							</View>
+							<View  style={styles.cardButtons} > 
+								<TouchableOpacity activeOpacity={0.9} onPress={ !info.isFavorite ? this._addMovieToWatchlist : this._removeFromWatchlist} >
+								<Text style={styles.cardButtonsText}> {!info.isFavorite ? "Remove" : "Add"}</Text>
+								</TouchableOpacity>
+							</View>
+							
+							
+							
 						</View>
 					</View>
 					<View style={styles.contentContainer}>

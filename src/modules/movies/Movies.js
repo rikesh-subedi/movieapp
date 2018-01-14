@@ -18,6 +18,7 @@ import CardTwo from './components/CardTwo';
 import ProgressBar from '../_global/ProgressBar';
 import styles from './styles/Movies';
 import { iconsMap } from '../../utils/AppIcons';
+import * as movieListTypes from '../../constants/movieListTypes';
 
 class Movies extends Component {
 	constructor(props) {
@@ -72,11 +73,12 @@ class Movies extends Component {
 		});
 	}
 
-	_viewMovie(movieId) {
+	_viewMovie(movie) {
 		this.props.navigator.showModal({
 			screen: 'movieapp.Movie',
 			passProps: {
-				movieId
+				...movie,
+				movieId: movie.id
 			},
 			backButtonHidden: true,
 			navigatorButtons: {
@@ -155,7 +157,7 @@ class Movies extends Component {
 						<TouchableOpacity>
 							<Text
 								style={styles.listHeadingRight}
-								onPress={this._viewMoviesList.bind(this, 'popular', 'Popular')}>
+								onPress={this._viewMoviesList.bind(this, movieListTypes.POPULAR, 'Popular')}>
 								See all
 							</Text>
 						</TouchableOpacity>
@@ -171,7 +173,7 @@ class Movies extends Component {
 								{iconPlay}
 								<Text
 									style={styles.browseListItemText}
-									onPress={this._viewMoviesList.bind(this, 'now_playing', 'Now Playing')}>
+									onPress={this._viewMoviesList.bind(this, movieListTypes.NOW_PLAYING, 'Now Playing')}>
 									Now Playing
 								</Text>
 							</View>
@@ -179,7 +181,7 @@ class Movies extends Component {
 						<TouchableOpacity activeOpacity={0.7}>
 							<View style={styles.browseListItem}>
 								{iconTop}
-								<Text style={styles.browseListItemText} onPress={this._viewMoviesList.bind(this, 'top_rated', 'Top Rated')}>
+								<Text style={styles.browseListItemText} onPress={this._viewMoviesList.bind(this, movieListTypes.TOP_RATED, 'Top Rated')}>
 									Top Rated
 								</Text>
 							</View>
@@ -189,7 +191,7 @@ class Movies extends Component {
 								{iconUp}
 								<Text
 									style={styles.browseListItemText}
-									onPress={this._viewMoviesList.bind(this, 'upcoming', 'Upcoming')}>
+									onPress={this._viewMoviesList.bind(this, movieListTypes.UPCOMING, 'Upcoming')}>
 									Upcoming
 								</Text>
 							</View>

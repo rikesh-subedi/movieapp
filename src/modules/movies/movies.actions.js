@@ -1,6 +1,9 @@
 import axios from 'axios';
 import * as types from '../../constants/actionTypes';
 import { TMDB_URL, TMDB_API_KEY } from '../../constants/api';
+import {AsyncStorage} from 'react-native'
+import { TOGGLE_FAVORITE } from '../../constants/actionTypes';
+import * as movieListTypes from '../../constants/movieListTypes';
 
 // GENRES
 export function retrieveMoviesGenresSuccess(res) {
@@ -27,6 +30,14 @@ export function retrievePopularMoviesSuccess(res) {
 	return {
 		type: types.RETRIEVE_POPULAR_MOVIES_SUCCESS,
 		popularMovies: res.data
+	};
+}
+
+//watchlist
+export function retrieveWatchlistSuccess(res) {
+	return {
+		type: types.RETRIEVE_WATCHLIST_SUCCESS,
+		watchlist: res
 	};
 }
 
@@ -72,13 +83,29 @@ export function retrieveMoviesListSuccess(res) {
 
 export function retrieveMoviesList(type, page) {
 	return function (dispatch) {
-		return axios.get(`${TMDB_URL}/movie/${type}?api_key=${TMDB_API_KEY}&page=${page}`)
-		.then(res => {
-			dispatch(retrieveMoviesListSuccess(res));
-		})
-		.catch(error => {
-			console.log('Movies List', error); //eslint-disable-line
-		});
+		switch(type) {
+			case movieListTypes.WATCHLIST:
+			return getMoviesFromWatchlist().then(list => {
+				dispatch(retrieveWatchlistSuccess(list))
+			})
+			.catch(error => {
+				console.log('Movies List', error); //eslint-disable-line
+			})
+			break;
+			default:
+			return axios.get(`${TMDB_URL}/movie/${type}?api_key=${TMDB_API_KEY}&page=${page}`)
+			.then(res => {
+				dispatch(retrieveMoviesListSuccess(res));
+			})
+			.catch(error => {
+				console.log('Movies List', error); //eslint-disable-line
+			});
+				break;
+
+		}
+
+
+		
 	};
 }
 
@@ -110,14 +137,68 @@ export function retrieveMovieDetailsSuccess(res) {
 	};
 }
 
+export function toggleFavorite(res) {
+	return {
+		type: types.TOGGLE_FAVORITE,
+		movieId: res.movieId,
+		isFavorite: res.isFavorite
+	}
+}
+
 export function retrieveMovieDetails(movieId) {
 	return function (dispatch) {
 		return axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
 		.then(res => {
-			dispatch(retrieveMovieDetailsSuccess(res));
+			isMovieInWatchlist(movieId).then(isFavorited => {
+				var res2 = res
+				res2.data.isFavorite = isFavorited
+				dispatch(retrieveMovieDetailsSuccess(res2));
+			})
+			
 		})
 		.catch(error => {
 			console.log('Movie Details', error); //eslint-disable-line
 		});
 	};
+}
+
+export async function isMovieInWatchlist(movie) {
+	const storedMovie = await AsyncStorage.getItem("MOVIE::"+movie.id)
+	return storedMovie !== undefined
+	
+}
+
+export function addToWatchlist(movie) {
+   return function(dispatch) {
+	const movieTobeSaved = JSON.stringify({
+		id: movie.id,
+		movieId: movie.movieId,
+		poster_path: movie.poster_path,
+		original_title: movie.original_title,
+		vote_average:movie.vote_average,
+		release_date: movie.release_date,
+		overview: movie.overview
+	 });
+	AsyncStorage.setItem("MOVIE::"+movie.id, movieTobeSaved , () => {
+		dispatch(toggleFavorite({isFavorite: true, movieId: movie.id}))
+	})
+   }
+	
+}
+
+
+export function removeFromWatchlist(movie) {
+	AsyncStorage.removeItem("MOVIE::"+movie.id);
+	return function(dispatch) {
+		dispatch(toggleFavorite({isFavorite: false, movieId: movie.id}))
+	}
+	
+}
+
+async function getMoviesFromWatchlist() {
+		const list = await AsyncStorage.getAllKeys();
+		const movieIDs = list.filter((movieId)=> { return movieId.indexOf("MOVIE::") == 0});
+		console.log("moviesIds ::" + movieIDs);
+		let allMovies = await AsyncStorage.multiGet(movieIDs);
+		return allMovies;//.map(movieString => JSON.parse(movieString))
 }
