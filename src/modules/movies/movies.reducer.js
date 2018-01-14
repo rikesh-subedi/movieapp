@@ -7,7 +7,7 @@ export default function (state = initialState.movies, action) {
 		case types.RETRIEVE_WATCHLIST_SUCCESS:
 			return {
 				...state,
-				watchlist: action.watchlist
+				list: action.list
 			};
 
 		case types.TOGGLE_FAVORITE:

@@ -37,7 +37,7 @@ export function retrievePopularMoviesSuccess(res) {
 export function retrieveWatchlistSuccess(res) {
 	return {
 		type: types.RETRIEVE_WATCHLIST_SUCCESS,
-		watchlist: res
+		list: res
 	};
 }
 
@@ -149,9 +149,9 @@ export function retrieveMovieDetails(movieId) {
 	return function (dispatch) {
 		return axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
 		.then(res => {
-			isMovieInWatchlist(movieId).then(isFavorited => {
+			isMovieInWatchlist(movieId).then(movie => {
 				var res2 = res
-				res2.data.isFavorite = isFavorited
+				res2.data.isFavorite = movie != null
 				dispatch(retrieveMovieDetailsSuccess(res2));
 			})
 			
@@ -162,9 +162,11 @@ export function retrieveMovieDetails(movieId) {
 	};
 }
 
-export async function isMovieInWatchlist(movie) {
-	const storedMovie = await AsyncStorage.getItem("MOVIE::"+movie.id)
-	return storedMovie !== undefined
+export async function isMovieInWatchlist(movieId) {
+	const storedMovie = await AsyncStorage.getItem("MOVIE::"+movieId)
+	console.log("isMOvieinwatchlist")
+	console.log(storedMovie)
+	return storedMovie
 	
 }
 
@@ -200,5 +202,5 @@ async function getMoviesFromWatchlist() {
 		const movieIDs = list.filter((movieId)=> { return movieId.indexOf("MOVIE::") == 0});
 		console.log("moviesIds ::" + movieIDs);
 		let allMovies = await AsyncStorage.multiGet(movieIDs);
-		return allMovies;//.map(movieString => JSON.parse(movieString))
+		return {page: 1, total_results: allMovies.length, total_pages: 1, results: allMovies.map(item => JSON.parse(item[1]))}
 }

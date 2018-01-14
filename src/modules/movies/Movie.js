@@ -39,8 +39,7 @@ class Movie extends Component {
 			showSimilarMovies: true,
 			trailersTabHeight: null,
 			tab: 0,
-			youtubeVideos: [],
-			isInWatchlist: false
+			youtubeVideos: []
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -233,8 +232,8 @@ class Movie extends Component {
 								<Text style={styles.cardStarRatings}>{info.runtime} mins</Text>
 							</View>
 							<View  style={styles.cardButtons} > 
-								<TouchableOpacity activeOpacity={0.9} onPress={ !info.isFavorite ? this._addMovieToWatchlist : this._removeFromWatchlist} >
-								<Text style={styles.cardButtonsText}> {!info.isFavorite ? "Remove" : "Add"}</Text>
+								<TouchableOpacity activeOpacity={0.9} onPress={ info.isFavorite ?this._removeFromWatchlist : this._addMovieToWatchlist} >
+								<Text style={styles.cardButtonsText}> {info.isFavorite ? "Remove" : "Add"}</Text>
 								</TouchableOpacity>
 							</View>
 							
